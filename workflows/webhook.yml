@@ -1,0 +1,23 @@
+name: Webhook
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["Deploy"]
+    types:
+      - completed
+
+jobs:
+  send-webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send webhook on push
+        run: |
+          curl -X POST https://your-webhook-endpoint-url \
+          -H "Content-Type: application/json" \
+          -d '{"event": "push", "author": "${{ github.actor }}", "branch": "${{ github.ref }}", "timestamp": "${{ github.event.head_commit.timestamp }}"}'
